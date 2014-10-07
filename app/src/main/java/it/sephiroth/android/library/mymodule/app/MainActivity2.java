@@ -104,6 +104,7 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 			       .toggleArrow(true)
 			       .maxWidth(400)
 			       .withCallback(this)
+			       .background(R.color.black_dark_transparent)
 			       .show();
 		}
 	}
