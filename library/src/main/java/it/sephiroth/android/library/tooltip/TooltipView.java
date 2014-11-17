@@ -1,27 +1,16 @@
 package it.sephiroth.android.library.tooltip;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
-import android.os.Build;
 import android.text.Html;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
-import android.view.Window;
+import android.view.*;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
-
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.animation.AnimatorProxy;
 
@@ -60,6 +49,8 @@ class TooltipView extends ViewGroup implements Tooltip {
 	private final boolean restrict;
 	private final long fadeDuration;
 	private final TooltipManager.onTooltipClosingCallback closeCallback;
+    private final int inAnimation;
+    private final int outAnimation;
 
 	private CharSequence text;
 	Gravity gravity;
@@ -88,8 +79,10 @@ class TooltipView extends ViewGroup implements Tooltip {
 		this.activateDelay = builder.activateDelay;
 		this.targetView = builder.view;
 		this.restrict = builder.restrictToScreenEdges;
-		this.fadeDuration = builder.fadeDuration;
+		this.fadeDuration = builder.animationDuration;
 		this.closeCallback = builder.closeCallback;
+        this.inAnimation = builder.inAnimation;
+        this.outAnimation = builder.outAnimation;
 
 		if (null != builder.point) {
 			this.point = new Point(builder.point);
@@ -124,68 +117,61 @@ class TooltipView extends ViewGroup implements Tooltip {
 			if (DBG) Log.e(TAG, "not attached!");
 			return;
 		}
-		fadeIn();
+		animateIn();
 	}
 
 	@Override
 	public void hide(boolean remove) {
 		if (DBG) Log.i(TAG, "hide");
 		if (! isAttached()) return;
-		fadeOut(remove);
+		animateOut(remove);
 	}
 
-	Animator mShowAnimation;
+    Animation mAnimation;
+    boolean animationCancelled = false;
 	boolean mShowing;
 
-	protected void fadeIn() {
+	protected void animateIn() {
 		if (mShowing) return;
 
-		if (null != mShowAnimation) {
-			mShowAnimation.cancel();
+		if (null != mAnimation) {
+			mAnimation.cancel();
 		}
 
-		if (DBG) Log.i(TAG, "fadeIn");
+		if (DBG) Log.i(TAG, "animateIn");
 
 		mShowing = true;
 
-		if (fadeDuration > 0) {
-			mShowAnimation = ObjectAnimator.ofFloat(this, "alpha", 0, 1);
-			mShowAnimation.setDuration(fadeDuration);
+		if (fadeDuration > 0 && inAnimation != 0) {
+            mAnimation = AnimationUtils.loadAnimation(getContext(), inAnimation);
+			mAnimation.setDuration(fadeDuration);
 			if (this.showDelay > 0) {
-				mShowAnimation.setStartDelay(this.showDelay);
+				mAnimation.setStartOffset(this.showDelay);
 			}
-			mShowAnimation.addListener(
-				new Animator.AnimatorListener() {
-					boolean cancelled;
+            mAnimation.setAnimationListener(new Animation.AnimationListener() {
 
-					@Override
-					public void onAnimationStart(final Animator animation) {
-						setVisibility(View.VISIBLE);
-						cancelled = false;
-					}
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    Log.d(TAG, "fadein::onAnimationStart");
+                    animationCancelled = false;
+                }
 
-					@Override
-					public void onAnimationEnd(final Animator animation) {
-						if (DBG) Log.i(TAG, "fadein::onAnimationEnd, cancelled: " + cancelled);
-						if (null != tooltipListener && ! cancelled) {
-							tooltipListener.onShowCompleted(TooltipView.this);
-							postActivate(activateDelay);
-						}
-					}
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    if (DBG) Log.i(TAG, "fadein::onAnimationEnd, cancelled: " + animationCancelled);
+                    if (null != tooltipListener && !animationCancelled) {
+                        tooltipListener.onShowCompleted(TooltipView.this);
+                        postActivate(activateDelay);
+                    }
+                }
 
-					@Override
-					public void onAnimationCancel(final Animator animation) {
-						if (DBG) Log.i(TAG, "fadein::onAnimationCancel");
-						cancelled = true;
-					}
+                @Override
+                public void onAnimationRepeat(Animation animation) {
 
-					@Override
-					public void onAnimationRepeat(final Animator animation) {
-
-					}
-				}
-			);
-			mShowAnimation.start();
+                }
+            });
+            setVisibility(View.VISIBLE);
+			mView.startAnimation(mAnimation);
 		}
 		else {
 			setVisibility(View.VISIBLE);
@@ -241,59 +227,51 @@ class TooltipView extends ViewGroup implements Tooltip {
 			}
 			((ViewGroup) parent).removeView(TooltipView.this);
 
-			if (null != mShowAnimation && mShowAnimation.isStarted()) {
-				mShowAnimation.cancel();
+			if (null != mAnimation && mAnimation.hasStarted() && !mAnimation.hasEnded()) {
+                animationCancelled = true;
+				mAnimation.cancel();
 			}
 		}
 	}
 
-	protected void fadeOut(final boolean remove) {
+	protected void animateOut(final boolean remove) {
 		if (! isAttached() || ! mShowing) return;
-		if (DBG) Log.i(TAG, "fadeOut");
+		if (DBG) Log.i(TAG, "animateOut");
 
-		if (null != mShowAnimation) {
-			mShowAnimation.cancel();
+		if (null != mAnimation) {
+            animationCancelled = true;
+			mAnimation.cancel();
 		}
 
 		mShowing = false;
 
-		if (fadeDuration > 0) {
-			float alpha = ViewHelper.getAlpha(this);
-			mShowAnimation = ObjectAnimator.ofFloat(this, "alpha", alpha, 0);
-			mShowAnimation.setDuration(fadeDuration);
-			mShowAnimation.addListener(
-				new Animator.AnimatorListener() {
-					boolean cancelled;
+		if (fadeDuration > 0 && outAnimation != 0) {
+            mAnimation = AnimationUtils.loadAnimation(getContext(), outAnimation);
+			mAnimation.setDuration(fadeDuration);
+            mAnimation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    Log.d(TAG, "fadeout::onAnimationStart");
+                    animationCancelled = false;
+                }
 
-					@Override
-					public void onAnimationStart(final Animator animation) {
-						cancelled = false;
-					}
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    if (DBG) Log.i(TAG, "fadeout::onAnimationEnd, cancelled: " + animationCancelled);
+                    if (animationCancelled) return;
 
-					@Override
-					public void onAnimationEnd(final Animator animation) {
-						if (DBG) Log.i(TAG, "fadeout::onAnimationEnd, cancelled: " + cancelled);
-						if (cancelled) return;
+                    if (remove) {
+                        fireOnHideCompleted();
+                    }
+                    mAnimation = null;
+                }
 
-						if (remove) {
-							fireOnHideCompleted();
-						}
-						mShowAnimation = null;
-					}
+                @Override
+                public void onAnimationRepeat(Animation animation) {
 
-					@Override
-					public void onAnimationCancel(final Animator animation) {
-						if (DBG) Log.i(TAG, "fadeout::onAnimationCancel");
-						cancelled = true;
-					}
-
-					@Override
-					public void onAnimationRepeat(final Animator animation) {
-
-					}
-				}
-			);
-			mShowAnimation.start();
+                }
+            });
+			mView.startAnimation(mAnimation);
 		}
 		else {
 			setVisibility(View.INVISIBLE);
@@ -403,8 +381,10 @@ class TooltipView extends ViewGroup implements Tooltip {
 
 		LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
+        //mView = new View();
+
 		mView = LayoutInflater.from(getContext()).inflate(textResId, this, false);
-		mView.setLayoutParams(params);
+		//mView.setLayoutParams(params);
 
 		if (null != mDrawable) {
 			mView.setBackgroundDrawable(mDrawable);
@@ -422,7 +402,7 @@ class TooltipView extends ViewGroup implements Tooltip {
 			mTextView.setMaxWidth(maxWidth);
 		}
 
-		this.addView(mView);
+		this.addView(mView, params);
 	}
 
 	private void calculatePositions(List<Gravity> gravities) {

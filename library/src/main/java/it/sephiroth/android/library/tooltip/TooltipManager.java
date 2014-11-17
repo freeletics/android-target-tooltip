@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TooltipManager {
-	static final boolean DBG = false;
+	static final boolean DBG = true;
 	private static final String TAG = "TooltipManager";
 
 	public static interface OnTooltipAttachedStateChange {
@@ -234,8 +234,10 @@ public class TooltipManager {
 		long activateDelay = 0;
 		boolean isCustomView;
 		boolean restrictToScreenEdges = true;
-		long fadeDuration = 200;
+		long animationDuration = 200;
 		onTooltipClosingCallback closeCallback;
+        int inAnimation = R.anim.fade_in;
+        int outAnimation = R.anim.fade_out;
 
 		Builder(final TooltipManager manager, int id) {
 			this.manager = new WeakReference<TooltipManager>(manager);
@@ -261,6 +263,12 @@ public class TooltipManager {
 			return withCustomView(resId, true);
 		}
 
+        public Builder withCustomAnimations(int in, int out) {
+            this.inAnimation = in;
+            this.outAnimation = out;
+            return this;
+        }
+
 		public Builder withStyleId(int styleId) {
 			this.defStyleAttr = 0;
 			this.defStyleRes = styleId;
@@ -272,8 +280,8 @@ public class TooltipManager {
 			return this;
 		}
 
-		public Builder fadeDuration(long ms) {
-			fadeDuration = ms;
+		public Builder animationDuration(long ms) {
+			animationDuration = ms;
 			return this;
 		}
 

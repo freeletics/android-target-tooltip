@@ -1,9 +1,6 @@
 package it.sephiroth.android.library.mymodule.app;
 
 import android.content.Intent;
-import android.content.res.TypedArray;
-import android.graphics.Point;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
@@ -12,7 +9,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-
 import it.sephiroth.android.library.tooltip.TooltipManager;
 
 
@@ -88,6 +84,8 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 			       .closePolicy(TooltipManager.ClosePolicy.TouchInside, 0)
 			       .text(R.string.hello_world)
 			       .toggleArrow(true)
+                   .animationDuration(1000)
+                   .withCustomAnimations(R.anim.pop_in, R.anim.pop_out)
 			       .maxWidth(400)
 			       .withCallback(this)
 			       .show();
