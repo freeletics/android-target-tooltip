@@ -18,6 +18,7 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 
 	Button mButton1;
 	Button mButton2;
+	Button mButton3;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +27,10 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 
 		mButton1 = (Button) findViewById(R.id.button1);
 		mButton2 = (Button) findViewById(R.id.button2);
+		mButton3 = (Button) findViewById(R.id.button3);
 		mButton1.setOnClickListener(this);
 		mButton2.setOnClickListener(this);
+		mButton3.setOnClickListener(this);
 	}
 
 
@@ -67,7 +70,7 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 
 		if (id == mButton1.getId()) {
 			manager.create(0)
-			       .anchor(mButton1, TooltipManager.Gravity.BOTTOM)
+			       .anchor(mButton1, TooltipManager.Gravity.RIGHT)
 			       .actionBarSize(Utils.getActionBarSize(getBaseContext()))
 			       .closePolicy(TooltipManager.ClosePolicy.TouchOutside, 3000)
 			       .text(R.string.hello_world)
@@ -79,7 +82,7 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 		}
 		else if (id == mButton2.getId()) {
 			manager.create(1)
-			       .anchor(mButton2, TooltipManager.Gravity.RIGHT)
+			       .anchor(mButton2, TooltipManager.Gravity.BOTTOM)
 			       .actionBarSize(Utils.getActionBarSize(getBaseContext()))
 			       .closePolicy(TooltipManager.ClosePolicy.TouchInside, 0)
 			       .text(R.string.hello_world)
@@ -88,6 +91,18 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
                    .withCustomAnimations(R.anim.pop_in, R.anim.pop_out)
 			       .maxWidth(400)
 			       .withCallback(this)
+			       .show();
+		}
+		else if (id == mButton3.getId()) {
+			manager.create(2)
+			       .anchor(mButton3, TooltipManager.Gravity.BOTTOM)
+			       .actionBarSize(Utils.getActionBarSize(getBaseContext()))
+			       .closePolicy(TooltipManager.ClosePolicy.TouchOutsideExclusive, 0)
+			       .text(R.string.hello_world)
+			       .toggleArrow(true)
+			       .maxWidth(400)
+			       .withCallback(this)
+			       .background(R.color.black_dark_transparent)
 			       .show();
 		}
 	}

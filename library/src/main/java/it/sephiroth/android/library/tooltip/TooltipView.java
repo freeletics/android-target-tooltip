@@ -84,6 +84,10 @@ class TooltipView extends ViewGroup implements Tooltip {
         this.inAnimation = builder.inAnimation;
         this.outAnimation = builder.outAnimation;
 
+		if (builder.backgroundColorResId > 0) {
+			setBackgroundColor(context.getResources().getColor(builder.backgroundColorResId));
+		}
+
 		if (null != builder.point) {
 			this.point = new Point(builder.point);
 			this.point.y += topRule;
@@ -652,7 +656,9 @@ class TooltipView extends ViewGroup implements Tooltip {
 
 		final int action = event.getAction();
 
-		if (closePolicy == ClosePolicy.TouchOutside || closePolicy == ClosePolicy.TouchInside) {
+		if (closePolicy == ClosePolicy.TouchOutside 
+    		    || closePolicy == ClosePolicy.TouchInside
+		    || closePolicy == ClosePolicy.TouchOutsideExclusive) {
 			if (! mActivated) {
 				if (DBG) Log.w(TAG, "not yet activated..., " + action);
 				return true;
@@ -668,7 +674,8 @@ class TooltipView extends ViewGroup implements Tooltip {
 				}
 				else {
 					onClose(true);
-					return drawRect.contains((int) event.getX(), (int) event.getY());
+					return closePolicy == ClosePolicy.TouchOutsideExclusive
+						|| drawRect.contains((int) event.getX(), (int) event.getY());
 				}
 			}
 		}

@@ -221,6 +221,7 @@ public class TooltipManager {
 		View view;
 		Gravity gravity;
 		int actionbarSize = 0;
+		int backgroundColorResId = 0;
 		int textResId = R.layout.tooltip_textview;
 		ClosePolicy closePolicy;
 		long showDuration;
@@ -361,6 +362,11 @@ public class TooltipManager {
 			this.showDelay = ms;
 			return this;
 		}
+		
+		public Builder background(int colorResId) {
+			this.backgroundColorResId = colorResId;
+			return this;
+		}
 
 		public boolean show() {
 			// verification
@@ -400,6 +406,12 @@ public class TooltipManager {
 		 * If delay is '0' the tooltip will never hide until clicked
 		 */
 		TouchOutside,
+		/**
+		 * tooltip will hide when user touches the screen, or after the specified delay.
+		 * If delay is '0' the tooltip will never hide until clicked.
+		 * Touch will be consumed in any case.
+		 */
+		TouchOutsideExclusive,
 		/**
 		 * tooltip is hidden only after the specified delay
 		 */
