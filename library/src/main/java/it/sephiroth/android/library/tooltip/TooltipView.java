@@ -24,109 +24,107 @@ import static it.sephiroth.android.library.tooltip.TooltipManager.DBG;
 
 class TooltipView extends ViewGroup implements Tooltip {
 
-	private static final String TAG = "ToolTipLayout";
-	private final long showDelay;
+    private static final String TAG = "ToolTipLayout";
+    private final long showDelay;
 
-	private boolean mAttached;
-	private boolean mInitialized;
-	private boolean mActivated;
+    private boolean mAttached;
+    private boolean mInitialized;
+    private boolean mActivated;
 
-	private final int toolTipId;
-	private final Rect viewRect;
-	private final Rect drawRect;
-	private final Rect tempRect;
+    private final int toolTipId;
+    private final Rect viewRect;
+    private final Rect drawRect;
+    private final Rect tempRect;
 
-	private final long showDuration;
-	private final ClosePolicy closePolicy;
-	private final View targetView;
-	private final Point point;
-	private final int textResId;
-	private final int topRule;
-	private final int maxWidth;
-	private final boolean hideArrow;
-	private int padding;
-	private final long activateDelay;
-	private final boolean restrict;
-	private final long animationDuration;
-	private final TooltipManager.onTooltipClosingCallback closeCallback;
+    private final long showDuration;
+    private final ClosePolicy closePolicy;
+    private final View targetView;
+    private final Point point;
+    private final int textResId;
+    private final int topRule;
+    private final int maxWidth;
+    private final boolean hideArrow;
+    private int padding;
+    private final long activateDelay;
+    private final boolean restrict;
+    private final long animationDuration;
+    private final TooltipManager.onTooltipClosingCallback closeCallback;
     private final int inAnimation;
     private final int outAnimation;
     private final int backgroundColorResId;
 
-	private CharSequence text;
-	TooltipManager.Gravity gravity;
+    private CharSequence text;
+    TooltipManager.Gravity gravity;
 
-	private View mView;
-	private TextView mTextView;
-	private final TooltipTextDrawable mDrawable;
+    private View mView;
+    private TextView mTextView;
+    private final TooltipTextDrawable mDrawable;
     private TransitionDrawable mBackgroundTransitionDrawable;
 
-	public TooltipView(Context context, TooltipManager.Builder builder) {
-		super(context);
+    public TooltipView(Context context, TooltipManager.Builder builder) {
+        super(context);
 
-		TypedArray theme = context.getTheme().obtainStyledAttributes(null, R.styleable.TooltipLayout, builder.defStyleAttr, builder.defStyleRes);
-		this.padding = theme.getDimensionPixelSize(R.styleable.TooltipLayout_ttlm_padding, 30);
-		theme.recycle();
+        TypedArray theme = context.getTheme().obtainStyledAttributes(null, R.styleable.TooltipLayout, builder.defStyleAttr, builder.defStyleRes);
+        this.padding = theme.getDimensionPixelSize(R.styleable.TooltipLayout_ttlm_padding, 30);
+        theme.recycle();
 
-		this.toolTipId = builder.id;
-		this.text = builder.text;
-		this.gravity = builder.gravity;
-		this.textResId = builder.textResId;
-		this.maxWidth = builder.maxWidth;
-		this.topRule = builder.actionbarSize;
-		this.closePolicy = builder.closePolicy;
-		this.showDuration = builder.showDuration;
-		this.showDelay = builder.showDelay;
-		this.hideArrow = builder.hideArrow;
-		this.activateDelay = builder.activateDelay;
-		this.targetView = builder.view;
-		this.restrict = builder.restrictToScreenEdges;
-		this.animationDuration = builder.animationDuration;
-		this.closeCallback = builder.closeCallback;
+        this.toolTipId = builder.id;
+        this.text = builder.text;
+        this.gravity = builder.gravity;
+        this.textResId = builder.textResId;
+        this.maxWidth = builder.maxWidth;
+        this.topRule = builder.actionbarSize;
+        this.closePolicy = builder.closePolicy;
+        this.showDuration = builder.showDuration;
+        this.showDelay = builder.showDelay;
+        this.hideArrow = builder.hideArrow;
+        this.activateDelay = builder.activateDelay;
+        this.targetView = builder.view;
+        this.restrict = builder.restrictToScreenEdges;
+        this.animationDuration = builder.animationDuration;
+        this.closeCallback = builder.closeCallback;
         this.inAnimation = builder.inAnimation;
         this.outAnimation = builder.outAnimation;
         this.backgroundColorResId = builder.backgroundColorResId;
 
-		if (builder.backgroundColorResId > 0) {
+        if (builder.backgroundColorResId > 0) {
             ColorDrawable[] color = {new ColorDrawable(Color.TRANSPARENT),
                     new ColorDrawable(getContext().getResources().getColor(backgroundColorResId))};
             mBackgroundTransitionDrawable = new TransitionDrawable(color);
             setBackgroundDrawable(mBackgroundTransitionDrawable);
-		}
+        }
 
-		if (null != builder.point) {
-			this.point = new Point(builder.point);
-			this.point.y += topRule;
-		}
-		else {
-			this.point = null;
-		}
+        if (null != builder.point) {
+            this.point = new Point(builder.point);
+            this.point.y += topRule;
+        } else {
+            this.point = null;
+        }
 
-		this.viewRect = new Rect();
-		this.drawRect = new Rect();
-		this.tempRect = new Rect();
+        this.viewRect = new Rect();
+        this.drawRect = new Rect();
+        this.tempRect = new Rect();
 
-		if (! builder.isCustomView) {
-			this.mDrawable = new TooltipTextDrawable(context, builder);
-		}
-		else {
-			this.mDrawable = null;
-		}
+        if (!builder.isCustomView) {
+            this.mDrawable = new TooltipTextDrawable(context, builder);
+        } else {
+            this.mDrawable = null;
+        }
 
-		setVisibility(INVISIBLE);
-	}
+        setVisibility(INVISIBLE);
+    }
 
-	int getTooltipId() {
-		return toolTipId;
-	}
+    int getTooltipId() {
+        return toolTipId;
+    }
 
-	@Override
-	public void show() {
-		if (DBG) Log.i(TAG, "show");
-		if (! isAttached()) {
-			if (DBG) Log.e(TAG, "not attached!");
-			return;
-		}
+    @Override
+    public void show() {
+        if (DBG) Log.i(TAG, "show");
+        if (!isAttached()) {
+            if (DBG) Log.e(TAG, "not attached!");
+            return;
+        }
 
         postDelayed(new Runnable() {
             @Override
@@ -134,34 +132,34 @@ class TooltipView extends ViewGroup implements Tooltip {
                 animateIn();
             }
         }, showDelay);
-	}
+    }
 
-	@Override
-	public void hide(boolean remove) {
-		if (DBG) Log.i(TAG, "hide");
-		if (! isAttached()) return;
-		animateOut(remove);
-	}
+    @Override
+    public void hide(boolean remove) {
+        if (DBG) Log.i(TAG, "hide");
+        if (!isAttached()) return;
+        animateOut(remove);
+    }
 
     Animator mAnimation;
-	boolean mShowing;
+    boolean mShowing;
 
-	protected void animateIn() {
-		if (mShowing) return;
+    protected void animateIn() {
+        if (mShowing) return;
 
-		if (null != mAnimation) {
-			mAnimation.cancel();
-		}
+        if (null != mAnimation) {
+            mAnimation.cancel();
+        }
 
-		if (DBG) Log.i(TAG, "animateIn");
+        if (DBG) Log.i(TAG, "animateIn");
 
-		mShowing = true;
+        mShowing = true;
 
-		if (animationDuration > 0 && inAnimation > 0) {
+        if (animationDuration > 0 && inAnimation > 0) {
 
             mAnimation = AnimatorInflater.loadAnimator(getContext(), inAnimation);
             mAnimation.setTarget(mView);
-			mAnimation.setDuration(animationDuration);
+            mAnimation.setDuration(animationDuration);
 
             mAnimation.addListener(new Animator.AnimatorListener() {
                 private boolean cancelled;
@@ -195,81 +193,79 @@ class TooltipView extends ViewGroup implements Tooltip {
             if (mBackgroundTransitionDrawable != null) {
                 mBackgroundTransitionDrawable.startTransition((int) animationDuration);
             }
-		}
-		else {
-			setVisibility(VISIBLE);
+        } else {
+            setVisibility(VISIBLE);
             if (backgroundColorResId > 0) {
                 setBackgroundColor(getContext().getResources().getColor(backgroundColorResId));
             }
-			tooltipListener.onShowCompleted(TooltipView.this);
-			if (! mActivated) {
-				postActivate(activateDelay);
-			}
-		}
+            tooltipListener.onShowCompleted(TooltipView.this);
+            if (!mActivated) {
+                postActivate(activateDelay);
+            }
+        }
 
-		if (showDuration > 0) {
-			getHandler().removeCallbacks(hideRunnable);
-			getHandler().postDelayed(hideRunnable, showDuration);
-		}
-	}
+        if (showDuration > 0) {
+            getHandler().removeCallbacks(hideRunnable);
+            getHandler().postDelayed(hideRunnable, showDuration);
+        }
+    }
 
-	Runnable activateRunnable = new Runnable() {
-		@Override
-		public void run() {
-			if (DBG) Log.v(TAG, "activated..");
-			mActivated = true;
-		}
-	};
+    Runnable activateRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (DBG) Log.v(TAG, "activated..");
+            mActivated = true;
+        }
+    };
 
-	Runnable hideRunnable = new Runnable() {
-		@Override
-		public void run() {
-			onClose(false);
-		}
-	};
+    Runnable hideRunnable = new Runnable() {
+        @Override
+        public void run() {
+            onClose(false);
+        }
+    };
 
-	boolean isShowing() {
-		return mShowing;
-	}
+    boolean isShowing() {
+        return mShowing;
+    }
 
-	void postActivate(long ms) {
-		if (DBG) Log.i(TAG, "postActivate: " + ms);
-		if (ms > 0) {
-			if (isAttached()) {
-				postDelayed(activateRunnable, ms);
-			}
-		}
-		else {
-			mActivated = true;
-		}
-	}
+    void postActivate(long ms) {
+        if (DBG) Log.i(TAG, "postActivate: " + ms);
+        if (ms > 0) {
+            if (isAttached()) {
+                postDelayed(activateRunnable, ms);
+            }
+        } else {
+            mActivated = true;
+        }
+    }
 
-	void removeFromParent() {
-		if (DBG) Log.i(TAG, "removeFromParent: " + toolTipId);
-		ViewParent parent = getParent();
-		if (null != parent) {
-			if (null != getHandler()) {
-				getHandler().removeCallbacks(hideRunnable);
-			}
-			((ViewGroup) parent).removeView(TooltipView.this);
+    void removeFromParent() {
+        if (DBG) Log.i(TAG, "removeFromParent: " + toolTipId);
+        ViewParent parent = getParent();
+        if (null != parent) {
+            if (null != getHandler()) {
+                getHandler().removeCallbacks(hideRunnable);
+            }
+            ((ViewGroup) parent).removeView(TooltipView.this);
 
-			if (null != mAnimation && mAnimation.isStarted()) {
-				mAnimation.cancel();
-			}
-		}
-	}
+            if (null != mAnimation && mAnimation.isStarted()) {
+                mAnimation.cancel();
+            }
+        }
+    }
 
-	protected void animateOut(final boolean remove) {
-		if (! isAttached() || ! mShowing) return;
-		if (DBG) Log.i(TAG, "animateOut");
+    protected void animateOut(final boolean remove) {
+        if (!isAttached() || !mShowing) return;
+        if (DBG) Log.i(TAG, "animateOut");
 
-		if (null != mAnimation) {
-			mAnimation.cancel();
-		}
+        if (null != mAnimation) {
+            mAnimation.cancel();
+        }
 
-		mShowing = false;
+        mShowing = false;
 
-		if (animationDuration > 0 && outAnimation != 0) {
+        if (animationDuration > 0 && outAnimation != 0) {
 
             mAnimation = AnimatorInflater.loadAnimator(getContext(), outAnimation);
             mAnimation.setTarget(mView);
@@ -307,444 +303,430 @@ class TooltipView extends ViewGroup implements Tooltip {
             if (mBackgroundTransitionDrawable != null) {
                 mBackgroundTransitionDrawable.reverseTransition((int) animationDuration);
             }
-		}
-		else {
-			setVisibility(INVISIBLE);
+        } else {
+            setVisibility(INVISIBLE);
             setBackgroundColor(Color.TRANSPARENT);
-			if (remove) {
-				fireOnHideCompleted();
-			}
-		}
-	}
+            if (remove) {
+                fireOnHideCompleted();
+            }
+        }
+    }
 
-	private void fireOnHideCompleted() {
-		if (null != tooltipListener) {
-			tooltipListener.onHideCompleted(TooltipView.this);
-		}
-	}
+    private void fireOnHideCompleted() {
+        if (null != tooltipListener) {
+            tooltipListener.onHideCompleted(TooltipView.this);
+        }
+    }
 
-	@Override
-	protected void onLayout(final boolean changed, final int l, final int t, final int r, final int b) {
-		if (DBG) Log.i(TAG, "onLayout, changed: " + changed + ", " + l + ", " + t + ", " + r + ", " + b);
+    @Override
+    protected void onLayout(final boolean changed, final int l, final int t, final int r, final int b) {
+        if (DBG) Log.i(TAG, "onLayout, changed: " + changed + ", " + l + ", " + t + ", " + r + ", " + b);
 
-		//  The layout has actually already been performed and the positions
-		//  cached.  Apply the cached values to the children.
-		final int count = getChildCount();
+        //  The layout has actually already been performed and the positions
+        //  cached.  Apply the cached values to the children.
+        final int count = getChildCount();
 
-		for (int i = 0; i < count; i++) {
-			View child = getChildAt(i);
-			if (child.getVisibility() != GONE) {
-				child.layout(child.getLeft(), child.getTop(), child.getMeasuredWidth(), child.getMeasuredHeight());
-			}
-		}
+        for (int i = 0; i < count; i++) {
+            View child = getChildAt(i);
+            if (child.getVisibility() != GONE) {
+                child.layout(child.getLeft(), child.getTop(), child.getMeasuredWidth(), child.getMeasuredHeight());
+            }
+        }
 
-		if (changed) {
+        if (changed) {
 
-			List<TooltipManager.Gravity> gravities = new ArrayList<TooltipManager.Gravity>(
-				Arrays.asList(
-                        TooltipManager.Gravity.LEFT,
-                        TooltipManager.Gravity.RIGHT,
-                        TooltipManager.Gravity.TOP,
-                        TooltipManager.Gravity.BOTTOM,
-                        TooltipManager.Gravity.CENTER
-				)
-			);
+            List<TooltipManager.Gravity> gravities = new ArrayList<TooltipManager.Gravity>(
+                    Arrays.asList(
+                            TooltipManager.Gravity.LEFT,
+                            TooltipManager.Gravity.RIGHT,
+                            TooltipManager.Gravity.TOP,
+                            TooltipManager.Gravity.BOTTOM,
+                            TooltipManager.Gravity.CENTER
+                    )
+            );
 
-			gravities.remove(gravity);
-			gravities.add(0, gravity);
-			calculatePositions(gravities);
-		}
-	}
+            gravities.remove(gravity);
+            gravities.add(0, gravity);
+            calculatePositions(gravities);
+        }
+    }
 
-	@Override
-	protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
-		if (DBG) Log.i(TAG, "onMeasure");
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    @Override
+    protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
+        if (DBG) Log.i(TAG, "onMeasure");
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-		int myWidth = - 1;
-		int myHeight = - 1;
+        int myWidth = -1;
+        int myHeight = -1;
 
-		final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-		final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-		final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-		final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
-		// Record our dimensions if they are known;
-		if (widthMode != MeasureSpec.UNSPECIFIED) {
-			myWidth = widthSize;
-		}
+        // Record our dimensions if they are known;
+        if (widthMode != MeasureSpec.UNSPECIFIED) {
+            myWidth = widthSize;
+        }
 
-		if (heightMode != MeasureSpec.UNSPECIFIED) {
-			myHeight = heightSize;
-		}
+        if (heightMode != MeasureSpec.UNSPECIFIED) {
+            myHeight = heightSize;
+        }
 
-		if (DBG) {
-			Log.v(TAG, "myWidth: " + myWidth);
-			Log.v(TAG, "myHeight: " + myHeight);
-		}
+        if (DBG) {
+            Log.v(TAG, "myWidth: " + myWidth);
+            Log.v(TAG, "myHeight: " + myHeight);
+        }
 
-		final int count = getChildCount();
+        final int count = getChildCount();
 
-		for (int i = 0; i < count; i++) {
-			View child = getChildAt(i);
-			if (child.getVisibility() != GONE) {
-				int childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(myWidth, MeasureSpec.AT_MOST);
-				int childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(myHeight, MeasureSpec.AT_MOST);
-				child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
-			}
-		}
+        for (int i = 0; i < count; i++) {
+            View child = getChildAt(i);
+            if (child.getVisibility() != GONE) {
+                int childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(myWidth, MeasureSpec.AT_MOST);
+                int childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(myHeight, MeasureSpec.AT_MOST);
+                child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+            }
+        }
 
-		setMeasuredDimension(myWidth, myHeight);
-	}
+        setMeasuredDimension(myWidth, myHeight);
+    }
 
-	@Override
-	protected void onAttachedToWindow() {
-		if (DBG) Log.i(TAG, "onAttachedToWindow");
-		super.onAttachedToWindow();
-		mAttached = true;
+    @Override
+    protected void onAttachedToWindow() {
+        if (DBG) Log.i(TAG, "onAttachedToWindow");
+        super.onAttachedToWindow();
+        mAttached = true;
 
-		initializeView();
-	}
+        initializeView();
+    }
 
-	@Override
-	protected void onDetachedFromWindow() {
-		if (DBG) Log.i(TAG, "onDetachedFromWindow");
-		super.onDetachedFromWindow();
-		mAttached = false;
-	}
+    @Override
+    protected void onDetachedFromWindow() {
+        if (DBG) Log.i(TAG, "onDetachedFromWindow");
+        super.onDetachedFromWindow();
+        mAttached = false;
+    }
 
-	private void initializeView() {
-		if (! isAttached() || mInitialized) return;
-		mInitialized = true;
+    private void initializeView() {
+        if (!isAttached() || mInitialized) return;
+        mInitialized = true;
 
-		if (DBG) Log.i(TAG, "initializeView");
+        if (DBG) Log.i(TAG, "initializeView");
 
-		LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
-		mView = LayoutInflater.from(getContext()).inflate(textResId, this, false);
+        mView = LayoutInflater.from(getContext()).inflate(textResId, this, false);
 
-		if (null != mDrawable) {
-			mView.setBackgroundDrawable(mDrawable);
-			if (hideArrow) {
-				mView.setPadding(padding / 2, padding / 2, padding / 2, padding / 2);
-			}
-			else {
-				mView.setPadding(padding, padding, padding, padding);
-			}
-		}
+        if (null != mDrawable) {
+            mView.setBackgroundDrawable(mDrawable);
+            if (hideArrow) {
+                mView.setPadding(padding / 2, padding / 2, padding / 2, padding / 2);
+            } else {
+                mView.setPadding(padding, padding, padding, padding);
+            }
+        }
 
-		mTextView = (TextView) mView.findViewById(android.R.id.text1);
-		mTextView.setText(Html.fromHtml((String) this.text));
-		if (maxWidth > - 1) {
-			mTextView.setMaxWidth(maxWidth);
-		}
+        mTextView = (TextView) mView.findViewById(android.R.id.text1);
+        mTextView.setText(Html.fromHtml((String) this.text));
+        if (maxWidth > -1) {
+            mTextView.setMaxWidth(maxWidth);
+        }
 
-		this.addView(mView, params);
-	}
+        this.addView(mView, params);
+    }
 
-	private void calculatePositions(List<TooltipManager.Gravity> gravities) {
-		if (! isAttached()) return;
+    private void calculatePositions(List<TooltipManager.Gravity> gravities) {
+        if (!isAttached()) return;
 
-		// failed to display the tooltip due to
-		// something wrong with its dimensions or
-		// the target position..
-		if (gravities.size() < 1) {
-			if (null != tooltipListener) {
-				tooltipListener.onShowFailed(this);
-			}
-			setVisibility(GONE);
-			return;
-		}
+        // failed to display the tooltip due to
+        // something wrong with its dimensions or
+        // the target position..
+        if (gravities.size() < 1) {
+            if (null != tooltipListener) {
+                tooltipListener.onShowFailed(this);
+            }
+            setVisibility(GONE);
+            return;
+        }
 
         TooltipManager.Gravity gravity = gravities.get(0);
 
-		if (DBG) Log.i(TAG, "calculatePositions: " + gravity + ", gravities: " + gravities.size());
+        if (DBG) Log.i(TAG, "calculatePositions: " + gravity + ", gravities: " + gravities.size());
 
-		gravities.remove(0);
+        gravities.remove(0);
 
-		Rect screenRect = new Rect();
-		Window window = ((Activity) getContext()).getWindow();
-		window.getDecorView().getWindowVisibleDisplayFrame(screenRect);
+        Rect screenRect = new Rect();
+        Window window = ((Activity) getContext()).getWindow();
+        window.getDecorView().getWindowVisibleDisplayFrame(screenRect);
 
-		int statusbarHeight = screenRect.top;
+        int statusbarHeight = screenRect.top;
 
-		if (DBG) {
-			Log.d(TAG, "screenRect: " + screenRect + ", topRule: " + topRule + ", statusBar: " + statusbarHeight);
-		}
+        if (DBG) {
+            Log.d(TAG, "screenRect: " + screenRect + ", topRule: " + topRule + ", statusBar: " + statusbarHeight);
+        }
 
-		screenRect.top += topRule;
+        screenRect.top += topRule;
 
-		// get the global visible rect for the target targetView
-		if (null != targetView) {
-			targetView.getGlobalVisibleRect(viewRect);
-		}
-		else {
-			viewRect.set(point.x, point.y + statusbarHeight, point.x, point.y + statusbarHeight);
-		}
+        // get the global visible rect for the target targetView
+        if (null != targetView) {
+            targetView.getGlobalVisibleRect(viewRect);
+        } else {
+            viewRect.set(point.x, point.y + statusbarHeight, point.x, point.y + statusbarHeight);
+        }
 
-		int width = mView.getMeasuredWidth();
-		int height = mView.getMeasuredHeight();
+        int width = mView.getMeasuredWidth();
+        int height = mView.getMeasuredHeight();
 
-		// get the destination point
-		Point point = new Point();
+        // get the destination point
+        Point point = new Point();
 
-		//@formatter:off
-		if (gravity == TooltipManager.Gravity.BOTTOM) {
-			drawRect.set(viewRect.centerX() - width / 2,
-			             viewRect.bottom,
-			             viewRect.centerX() + width / 2,
-			             viewRect.bottom + height);
+        //@formatter:off
+        if (gravity == TooltipManager.Gravity.BOTTOM) {
+            drawRect.set(viewRect.centerX() - width / 2,
+                    viewRect.bottom,
+                    viewRect.centerX() + width / 2,
+                    viewRect.bottom + height);
 
-			point.x = viewRect.centerX();
-			point.y = viewRect.bottom;
+            point.x = viewRect.centerX();
+            point.y = viewRect.bottom;
 
-			if (restrict && ! screenRect.contains(drawRect)){
-				if (drawRect.right > screenRect.right){
-					drawRect.offset(screenRect.right - drawRect.right, 0);
-				}
-				else if (drawRect.left < screenRect.left){
-					drawRect.offset(- drawRect.left, 0);
-				}
-				if (drawRect.bottom > screenRect.bottom){
-					// this means there's no enough space!
-					calculatePositions(gravities);
-					return;
-				} else if(drawRect.top < screenRect.top){
-					drawRect.offset(0, screenRect.top-drawRect.top);
-				}
-			}
-		}
-		else if (gravity == TooltipManager.Gravity.TOP){
-			drawRect.set(viewRect.centerX() - width / 2,
-			             viewRect.top - height,
-			             viewRect.centerX() + width / 2,
-			             viewRect.top);
+            if (restrict && !screenRect.contains(drawRect)) {
+                if (drawRect.right > screenRect.right) {
+                    drawRect.offset(screenRect.right - drawRect.right, 0);
+                } else if (drawRect.left < screenRect.left) {
+                    drawRect.offset(-drawRect.left, 0);
+                }
+                if (drawRect.bottom > screenRect.bottom) {
+                    // this means there's no enough space!
+                    calculatePositions(gravities);
+                    return;
+                } else if (drawRect.top < screenRect.top) {
+                    drawRect.offset(0, screenRect.top - drawRect.top);
+                }
+            }
+        } else if (gravity == TooltipManager.Gravity.TOP) {
+            drawRect.set(viewRect.centerX() - width / 2,
+                    viewRect.top - height,
+                    viewRect.centerX() + width / 2,
+                    viewRect.top);
 
-			point.x = viewRect.centerX();
-			point.y = viewRect.top;
+            point.x = viewRect.centerX();
+            point.y = viewRect.top;
 
-			if (restrict && ! screenRect.contains(drawRect)){
-				if (drawRect.right > screenRect.right){
-					drawRect.offset(screenRect.right - drawRect.right, 0);
-				}
-				else if (drawRect.left < screenRect.left){
-					drawRect.offset(- drawRect.left, 0);
-				}
-				if (drawRect.top < screenRect.top){
-					// this means there's no enough space!
-					calculatePositions(gravities);
-					return;
-				} else if(drawRect.bottom > screenRect.bottom){
-					drawRect.offset(0, screenRect.bottom - drawRect.bottom);
-				}
-			}
-		}
-		else if (gravity == TooltipManager.Gravity.RIGHT){
-			drawRect.set(viewRect.right,
-			             viewRect.centerY() - height / 2,
-			             viewRect.right + width,
-			             viewRect.centerY() + height / 2);
+            if (restrict && !screenRect.contains(drawRect)) {
+                if (drawRect.right > screenRect.right) {
+                    drawRect.offset(screenRect.right - drawRect.right, 0);
+                } else if (drawRect.left < screenRect.left) {
+                    drawRect.offset(-drawRect.left, 0);
+                }
+                if (drawRect.top < screenRect.top) {
+                    // this means there's no enough space!
+                    calculatePositions(gravities);
+                    return;
+                } else if (drawRect.bottom > screenRect.bottom) {
+                    drawRect.offset(0, screenRect.bottom - drawRect.bottom);
+                }
+            }
+        } else if (gravity == TooltipManager.Gravity.RIGHT) {
+            drawRect.set(viewRect.right,
+                    viewRect.centerY() - height / 2,
+                    viewRect.right + width,
+                    viewRect.centerY() + height / 2);
 
-			point.x = viewRect.right;
-			point.y = viewRect.centerY();
+            point.x = viewRect.right;
+            point.y = viewRect.centerY();
 
-			if (restrict && ! screenRect.contains(drawRect)){
-				if (drawRect.bottom > screenRect.bottom){
-					drawRect.offset(0, screenRect.bottom - drawRect.bottom);
-				}
-				else if (drawRect.top < screenRect.top){
-					drawRect.offset(0, screenRect.top - drawRect.top);
-				}
-				if (drawRect.right > screenRect.right){
-					// this means there's no enough space!
-					calculatePositions(gravities);
-					return;
-				} else if(drawRect.left < screenRect.left){
-					drawRect.offset(screenRect.left - drawRect.left, 0);
-				}
-			}
-		}
-		else if (gravity == TooltipManager.Gravity.LEFT){
-			drawRect.set(viewRect.left - width,
-			             viewRect.centerY() - height / 2,
-			             viewRect.left,
-			             viewRect.centerY() + height / 2);
+            if (restrict && !screenRect.contains(drawRect)) {
+                if (drawRect.bottom > screenRect.bottom) {
+                    drawRect.offset(0, screenRect.bottom - drawRect.bottom);
+                } else if (drawRect.top < screenRect.top) {
+                    drawRect.offset(0, screenRect.top - drawRect.top);
+                }
+                if (drawRect.right > screenRect.right) {
+                    // this means there's no enough space!
+                    calculatePositions(gravities);
+                    return;
+                } else if (drawRect.left < screenRect.left) {
+                    drawRect.offset(screenRect.left - drawRect.left, 0);
+                }
+            }
+        } else if (gravity == TooltipManager.Gravity.LEFT) {
+            drawRect.set(viewRect.left - width,
+                    viewRect.centerY() - height / 2,
+                    viewRect.left,
+                    viewRect.centerY() + height / 2);
 
-			point.x = viewRect.left;
-			point.y = viewRect.centerY();
+            point.x = viewRect.left;
+            point.y = viewRect.centerY();
 
-			if (restrict && ! screenRect.contains(drawRect)){
-				if (drawRect.bottom > screenRect.bottom){
-					drawRect.offset(0, screenRect.bottom - drawRect.bottom);
-				}
-				else if (drawRect.top < screenRect.top){
-					drawRect.offset(0, screenRect.top - drawRect.top);
-				}
-				if (drawRect.left < screenRect.left){
-					// this means there's no enough space!
-					this.gravity = TooltipManager.Gravity.RIGHT;
-					calculatePositions(gravities);
-					return;
-				} else if(drawRect.right > screenRect.right){
-					drawRect.offset(screenRect.right - drawRect.right, 0);
-				}
-			}
-		} else if (this.gravity == TooltipManager.Gravity.CENTER){
-			drawRect.set(viewRect.centerX() - width / 2,
-			             viewRect.centerY() - height / 2,
-			             viewRect.centerX() - width / 2,
-			             viewRect.centerY() + height / 2);
+            if (restrict && !screenRect.contains(drawRect)) {
+                if (drawRect.bottom > screenRect.bottom) {
+                    drawRect.offset(0, screenRect.bottom - drawRect.bottom);
+                } else if (drawRect.top < screenRect.top) {
+                    drawRect.offset(0, screenRect.top - drawRect.top);
+                }
+                if (drawRect.left < screenRect.left) {
+                    // this means there's no enough space!
+                    this.gravity = TooltipManager.Gravity.RIGHT;
+                    calculatePositions(gravities);
+                    return;
+                } else if (drawRect.right > screenRect.right) {
+                    drawRect.offset(screenRect.right - drawRect.right, 0);
+                }
+            }
+        } else if (this.gravity == TooltipManager.Gravity.CENTER) {
+            drawRect.set(viewRect.centerX() - width / 2,
+                    viewRect.centerY() - height / 2,
+                    viewRect.centerX() - width / 2,
+                    viewRect.centerY() + height / 2);
 
-			point.x = viewRect.centerX();
-			point.y = viewRect.centerY();
+            point.x = viewRect.centerX();
+            point.y = viewRect.centerY();
 
-			if (restrict && ! screenRect.contains(drawRect)){
-				if (drawRect.bottom > screenRect.bottom){
-					drawRect.offset(0, screenRect.bottom - drawRect.bottom);
-				}
-				else if (drawRect.top < screenRect.top){
-					drawRect.offset(0, screenRect.top - drawRect.top);
-				}
-				if (drawRect.right > screenRect.right){
-					drawRect.offset(screenRect.right - drawRect.right, 0);
-				}
-				else if (drawRect.left < screenRect.left){
-					drawRect.offset(screenRect.left - drawRect.left, 0);
-				}
-			}
-		}
-		//@formatter:on
+            if (restrict && !screenRect.contains(drawRect)) {
+                if (drawRect.bottom > screenRect.bottom) {
+                    drawRect.offset(0, screenRect.bottom - drawRect.bottom);
+                } else if (drawRect.top < screenRect.top) {
+                    drawRect.offset(0, screenRect.top - drawRect.top);
+                }
+                if (drawRect.right > screenRect.right) {
+                    drawRect.offset(screenRect.right - drawRect.right, 0);
+                } else if (drawRect.left < screenRect.left) {
+                    drawRect.offset(screenRect.left - drawRect.left, 0);
+                }
+            }
+        }
+        //@formatter:on
 
-		// translate the textview
+        // translate the textview
         mView.setTranslationX(drawRect.left);
-		mView.setTranslationY(drawRect.top);
+        mView.setTranslationY(drawRect.top);
 
-		if (null != mDrawable) {
-			// get the global rect for the textview
-			mView.getGlobalVisibleRect(tempRect);
+        if (null != mDrawable) {
+            // get the global rect for the textview
+            mView.getGlobalVisibleRect(tempRect);
 
-			point.x -= tempRect.left;
-			point.y -= tempRect.top;
+            point.x -= tempRect.left;
+            point.y -= tempRect.top;
 
-			if (! hideArrow) {
-				if (gravity == TooltipManager.Gravity.LEFT || gravity == TooltipManager.Gravity.RIGHT) {
-					point.y -= padding / 2;
-				}
-				else if (gravity == TooltipManager.Gravity.TOP || gravity == TooltipManager.Gravity.BOTTOM) {
-					point.x -= padding / 2;
-				}
-			}
+            if (!hideArrow) {
+                if (gravity == TooltipManager.Gravity.LEFT || gravity == TooltipManager.Gravity.RIGHT) {
+                    point.y -= padding / 2;
+                } else if (gravity == TooltipManager.Gravity.TOP || gravity == TooltipManager.Gravity.BOTTOM) {
+                    point.x -= padding / 2;
+                }
+            }
 
-			mDrawable.setAnchor(gravity, hideArrow ? 0 : padding / 2);
+            mDrawable.setAnchor(gravity, hideArrow ? 0 : padding / 2);
 
-			if (! this.hideArrow) {
-				mDrawable.setDestinationPoint(point);
-			}
-		}
-	}
+            if (!this.hideArrow) {
+                mDrawable.setDestinationPoint(point);
+            }
+        }
+    }
 
-	@Override
-	public void setOffsetX(int x) {
-		setTranslationX(x - viewRect.left);
-	}
+    @Override
+    public void setOffsetX(int x) {
+        setTranslationX(x - viewRect.left);
+    }
 
-	@Override
-	public void setOffsetY(int y) {
-		setTranslationY(viewRect.top);
-	}
+    @Override
+    public void setOffsetY(int y) {
+        setTranslationY(viewRect.top);
+    }
 
-	@Override
-	public void offsetTo(final int x, final int y) {
-		setTranslationX(x - viewRect.left);
-		setTranslationY(y - viewRect.top);
-	}
+    @Override
+    public void offsetTo(final int x, final int y) {
+        setTranslationX(x - viewRect.left);
+        setTranslationY(y - viewRect.top);
+    }
 
-	@Override
-	public boolean isAttached() {
-		return mAttached;
-	}
+    @Override
+    public boolean isAttached() {
+        return mAttached;
+    }
 
-	void setText(final CharSequence text) {
-		if (DBG) Log.i(TAG, "setText: " + text);
-		this.text = text;
-		if (null != mTextView) {
-			mTextView.setText(Html.fromHtml((String) text));
-		}
-	}
+    void setText(final CharSequence text) {
+        if (DBG) Log.i(TAG, "setText: " + text);
+        this.text = text;
+        if (null != mTextView) {
+            mTextView.setText(Html.fromHtml((String) text));
+        }
+    }
 
-	@Override
-	public boolean onTouchEvent(final MotionEvent event) {
+    @Override
+    public boolean onTouchEvent(final MotionEvent event) {
         if (mAnimation != null && mAnimation.isStarted()) return true;
-		if (! mAttached || ! mShowing || ! isShown()) return false;
+        if (!mAttached || !mShowing || !isShown()) return false;
 
-		if (DBG) Log.i(TAG, "onTouchEvent: " + event.getAction() + ", active: " + mActivated);
+        if (DBG) Log.i(TAG, "onTouchEvent: " + event.getAction() + ", active: " + mActivated);
 
-		final int action = event.getAction();
+        final int action = event.getAction();
 
-		if (closePolicy == ClosePolicy.TouchOutside 
-    		    || closePolicy == ClosePolicy.TouchInside
-		    || closePolicy == ClosePolicy.TouchOutsideExclusive) {
-			if (! mActivated) {
-				if (DBG) Log.w(TAG, "not yet activated..., " + action);
-				return true;
-			}
+        if (closePolicy == ClosePolicy.TouchOutside
+                || closePolicy == ClosePolicy.TouchInside
+                || closePolicy == ClosePolicy.TouchOutsideExclusive) {
+            if (!mActivated) {
+                if (DBG) Log.w(TAG, "not yet activated..., " + action);
+                return true;
+            }
 
-			if (action == MotionEvent.ACTION_DOWN) {
-				if (closePolicy == ClosePolicy.TouchInside) {
-					if (drawRect.contains((int) event.getX(), (int) event.getY())) {
-						onClose(true);
-						return true;
-					}
-					return false;
-				}
-				else {
-					onClose(true);
-					return closePolicy == ClosePolicy.TouchOutsideExclusive
-						|| drawRect.contains((int) event.getX(), (int) event.getY());
-				}
-			}
-		}
+            if (action == MotionEvent.ACTION_DOWN) {
+                if (closePolicy == ClosePolicy.TouchInside) {
+                    if (drawRect.contains((int) event.getX(), (int) event.getY())) {
+                        onClose(true);
+                        return true;
+                    }
+                    return false;
+                } else {
+                    onClose(true);
+                    return closePolicy == ClosePolicy.TouchOutsideExclusive
+                            || drawRect.contains((int) event.getX(), (int) event.getY());
+                }
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	private void onClose(boolean fromUser) {
-		if (DBG) Log.i(TAG, "onClose. fromUser: " + fromUser);
+    private void onClose(boolean fromUser) {
+        if (DBG) Log.i(TAG, "onClose. fromUser: " + fromUser);
 
-		if (null == getHandler()) return;
-		if (! isAttached()) return;
+        if (null == getHandler()) return;
+        if (!isAttached()) return;
 
-		getHandler().removeCallbacks(hideRunnable);
+        getHandler().removeCallbacks(hideRunnable);
 
-		if (null != closeListener) {
-			closeListener.onClose(this);
-		}
+        if (null != closeListener) {
+            closeListener.onClose(this);
+        }
 
-		if (null != closeCallback) {
-			closeCallback.onClosing(toolTipId, fromUser);
-		}
-	}
+        if (null != closeCallback) {
+            closeCallback.onClosing(toolTipId, fromUser);
+        }
+    }
 
-	private OnCloseListener closeListener;
-	private OnToolTipListener tooltipListener;
+    private OnCloseListener closeListener;
+    private OnToolTipListener tooltipListener;
 
-	void setOnCloseListener(OnCloseListener listener) {
-		this.closeListener = listener;
-	}
+    void setOnCloseListener(OnCloseListener listener) {
+        this.closeListener = listener;
+    }
 
-	void setOnToolTipListener(OnToolTipListener listener) {
-		this.tooltipListener = listener;
-	}
+    void setOnToolTipListener(OnToolTipListener listener) {
+        this.tooltipListener = listener;
+    }
 
-	static interface OnCloseListener {
-		void onClose(TooltipView layout);
-	}
+    static interface OnCloseListener {
+        void onClose(TooltipView layout);
+    }
 
-	static interface OnToolTipListener {
-		void onHideCompleted(TooltipView layout);
+    static interface OnToolTipListener {
+        void onHideCompleted(TooltipView layout);
 
-		void onShowCompleted(TooltipView layout);
+        void onShowCompleted(TooltipView layout);
 
-		void onShowFailed(TooltipView layout);
-	}
+        void onShowFailed(TooltipView layout);
+    }
 }
