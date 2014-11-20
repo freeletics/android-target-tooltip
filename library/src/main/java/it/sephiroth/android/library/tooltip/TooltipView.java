@@ -674,6 +674,7 @@ class TooltipView extends ViewGroup implements Tooltip {
 
 	@Override
 	public boolean onTouchEvent(final MotionEvent event) {
+        if (mAnimation != null && mAnimation.isStarted()) return true;
 		if (! mAttached || ! mShowing || ! isShown()) return false;
 
 		if (DBG) Log.i(TAG, "onTouchEvent: " + event.getAction() + ", active: " + mActivated);
