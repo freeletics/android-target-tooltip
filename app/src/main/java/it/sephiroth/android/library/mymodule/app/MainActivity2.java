@@ -19,6 +19,8 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 	Button mButton1;
 	Button mButton2;
 	Button mButton3;
+	Button mButton4;
+	Button mButton5;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +30,13 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 		mButton1 = (Button) findViewById(R.id.button1);
 		mButton2 = (Button) findViewById(R.id.button2);
 		mButton3 = (Button) findViewById(R.id.button3);
+		mButton4 = (Button) findViewById(R.id.button4);
+		mButton5 = (Button) findViewById(R.id.button5);
 		mButton1.setOnClickListener(this);
 		mButton2.setOnClickListener(this);
 		mButton3.setOnClickListener(this);
+		mButton4.setOnClickListener(this);
+		mButton5.setOnClickListener(this);
 	}
 
 
@@ -81,7 +87,7 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 		}
 		else if (id == mButton2.getId()) {
 			manager.create(1)
-			       .anchor(mButton2, TooltipManager.Gravity.BOTTOM)
+			       .anchor(mButton2, TooltipManager.Gravity.LEFT)
 			       .actionBarSize(Utils.getActionBarSize(getBaseContext()))
 			       .closePolicy(TooltipManager.ClosePolicy.TouchOutside, 0)
 			       .text(R.string.hello_world)
@@ -97,7 +103,7 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 			       .anchor(mButton3, TooltipManager.Gravity.TOP)
 			       .actionBarSize(Utils.getActionBarSize(getBaseContext()))
 			       .closePolicy(TooltipManager.ClosePolicy.TouchOutsideExclusive, 0)
-			       .text(R.string.hello_world)
+			       .text("Touch outside exclusive")
 			       .toggleArrow(true)
 			       .maxWidth(400)
 			       .withCallback(this)
@@ -105,7 +111,31 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
                    .withCustomAnimations(R.animator.pop_in, R.animator.pop_out)
 			       .background(R.color.black_dark_transparent)
 			       .show();
-		}
+		} else if (id == mButton4.getId()) {
+            manager.create(2)
+                .anchor(mButton4, TooltipManager.Gravity.BOTTOM)
+                .actionBarSize(Utils.getActionBarSize(getBaseContext()))
+                .closePolicy(TooltipManager.ClosePolicy.TouchInsideExclusive, 0)
+                .withCustomView(R.layout.custom_textview, false)
+                .text("Custom view with touch inside exclusive")
+                .toggleArrow(false)
+                .maxWidth(300)
+                .withCallback(this)
+                .show();
+        } else if (id == mButton5.getId()) {
+            manager.create(2)
+                .anchor(mButton4, TooltipManager.Gravity.TOP)
+                .actionBarSize(Utils.getActionBarSize(getBaseContext()))
+                .closePolicy(TooltipManager.ClosePolicy.TouchOutsideExclusive, 0)
+                .withCustomView(R.layout.custom_textview, true)
+                .text("Custom view, custom background, activate delay, touch outside exclusive")
+                .toggleArrow(true)
+                .maxWidth(300)
+                .showDelay(300)
+                .activateDelay(2000)
+                .withCallback(this)
+                .show();
+        }
 	}
 
 	@Override
@@ -115,7 +145,7 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 	}
 
 	@Override
-	public void onClosing(final int id, final boolean fromUser) {
-		Log.d(TAG, "onClosing: " + id + ", fromUser: " + fromUser);
+	public void onClosing(final int id, final boolean fromUser, final boolean containsTouch) {
+		Log.d(TAG, "onClosing: " + id + ", fromUser: " + fromUser + ", containsTouch: " + containsTouch);
 	}
 }

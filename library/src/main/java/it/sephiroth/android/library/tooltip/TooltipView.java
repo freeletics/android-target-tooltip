@@ -221,7 +221,7 @@ class TooltipView extends ViewGroup implements Tooltip {
     Runnable hideRunnable = new Runnable() {
         @Override
         public void run() {
-            onClose(false);
+			onClose(false, false);
         }
     };
 
@@ -662,36 +662,42 @@ class TooltipView extends ViewGroup implements Tooltip {
 
         if (DBG) Log.i(TAG, "onTouchEvent: " + event.getAction() + ", active: " + mActivated);
 
-        final int action = event.getAction();
+		final int action = event.getActionMasked();
 
         if (closePolicy == ClosePolicy.TouchOutside
                 || closePolicy == ClosePolicy.TouchInside
-                || closePolicy == ClosePolicy.TouchOutsideExclusive) {
+            || closePolicy == ClosePolicy.TouchInsideExclusive
+		    || closePolicy == ClosePolicy.TouchOutsideExclusive
+            ) {
+
             if (!mActivated) {
                 if (DBG) Log.w(TAG, "not yet activated..., " + action);
                 return true;
             }
 
             if (action == MotionEvent.ACTION_DOWN) {
-                if (closePolicy == ClosePolicy.TouchInside) {
-                    if (drawRect.contains((int) event.getX(), (int) event.getY())) {
-                        onClose(true);
+
+                final boolean containsTouch = drawRect.contains((int) event.getX(), (int) event.getY());
+
+				if (closePolicy == ClosePolicy.TouchInside || closePolicy == ClosePolicy.TouchInsideExclusive) {
+					if (containsTouch) {
+						onClose(true, true);
                         return true;
                     }
-                    return false;
-                } else {
-                    onClose(true);
-                    return closePolicy == ClosePolicy.TouchOutsideExclusive
-                            || drawRect.contains((int) event.getX(), (int) event.getY());
+					return closePolicy == ClosePolicy.TouchInsideExclusive;
                 }
+				else {
+					onClose(true, containsTouch);
+					return closePolicy == ClosePolicy.TouchOutsideExclusive || containsTouch;
             }
         }
+		}
 
         return false;
     }
 
-    private void onClose(boolean fromUser) {
-        if (DBG) Log.i(TAG, "onClose. fromUser: " + fromUser);
+	private void onClose(boolean fromUser, boolean containsTouch) {
+		if (DBG) Log.i(TAG, "onClose. fromUser: " + fromUser + ", containsTouch: " + containsTouch);
 
         if (null == getHandler()) return;
         if (!isAttached()) return;
@@ -703,7 +709,7 @@ class TooltipView extends ViewGroup implements Tooltip {
         }
 
         if (null != closeCallback) {
-            closeCallback.onClosing(toolTipId, fromUser);
+			closeCallback.onClosing(toolTipId, fromUser, containsTouch);
         }
     }
 
