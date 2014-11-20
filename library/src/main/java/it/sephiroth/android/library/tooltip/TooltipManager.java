@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TooltipManager {
-	static final boolean DBG = true;
+	static final boolean DBG = false;
 	private static final String TAG = "TooltipManager";
 
 	public static interface OnTooltipAttachedStateChange {
@@ -237,8 +237,8 @@ public class TooltipManager {
 		boolean restrictToScreenEdges = true;
 		long animationDuration = 200;
 		onTooltipClosingCallback closeCallback;
-        int inAnimation = R.anim.fade_in;
-        int outAnimation = R.anim.fade_out;
+        int inAnimation = android.R.animator.fade_in;
+        int outAnimation = android.R.animator.fade_out;
 
 		Builder(final TooltipManager manager, int id) {
 			this.manager = new WeakReference<TooltipManager>(manager);

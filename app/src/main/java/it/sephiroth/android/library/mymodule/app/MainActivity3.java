@@ -68,7 +68,7 @@ public class MainActivity3 extends ActionBarActivity
 		              .text("Brigthness, Saturation, Contrast and Warmth are now here!")
 		              .actionBarSize(Utils.getActionBarSize(this))
 		              .fitToScreen(false)
-		              .fadeDuration(100)
+		              .animationDuration(100)
 		              .withCallback(this)
 		              .build();
 	}
