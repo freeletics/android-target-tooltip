@@ -128,12 +128,12 @@ class TooltipView extends ViewGroup implements Tooltip {
 			return;
 		}
 
-        post(new Runnable() {
+        postDelayed(new Runnable() {
             @Override
             public void run() {
                 animateIn();
             }
-        });
+        }, showDelay);
 	}
 
 	@Override
@@ -162,16 +162,13 @@ class TooltipView extends ViewGroup implements Tooltip {
             mAnimation = AnimatorInflater.loadAnimator(getContext(), inAnimation);
             mAnimation.setTarget(mView);
 			mAnimation.setDuration(animationDuration);
-			if (this.showDelay > 0) {
-				mAnimation.setStartDelay(this.showDelay);
-			}
 
             mAnimation.addListener(new Animator.AnimatorListener() {
                 private boolean cancelled;
 
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    setVisibility(View.VISIBLE);
+                    setVisibility(VISIBLE);
                     cancelled = false;
                 }
 
@@ -200,7 +197,7 @@ class TooltipView extends ViewGroup implements Tooltip {
             }
 		}
 		else {
-			setVisibility(View.VISIBLE);
+			setVisibility(VISIBLE);
             if (backgroundColorResId > 0) {
                 setBackgroundColor(getContext().getResources().getColor(backgroundColorResId));
             }
@@ -292,7 +289,7 @@ class TooltipView extends ViewGroup implements Tooltip {
                     if (remove) {
                         fireOnHideCompleted();
                     }
-                    setVisibility(View.INVISIBLE);
+                    setVisibility(INVISIBLE);
                     mAnimation = null;
                 }
 
@@ -312,7 +309,7 @@ class TooltipView extends ViewGroup implements Tooltip {
             }
 		}
 		else {
-			setVisibility(View.INVISIBLE);
+			setVisibility(INVISIBLE);
             setBackgroundColor(Color.TRANSPARENT);
 			if (remove) {
 				fireOnHideCompleted();
@@ -455,7 +452,7 @@ class TooltipView extends ViewGroup implements Tooltip {
 			if (null != tooltipListener) {
 				tooltipListener.onShowFailed(this);
 			}
-			setVisibility(View.GONE);
+			setVisibility(GONE);
 			return;
 		}
 
