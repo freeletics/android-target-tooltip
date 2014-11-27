@@ -8,10 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class TooltipManager {
     static final boolean DBG = false;
@@ -25,7 +25,7 @@ public class TooltipManager {
 
     private static ConcurrentHashMap<Integer, TooltipManager> instances = new ConcurrentHashMap<Integer, TooltipManager>();
 
-    private final List<OnTooltipAttachedStateChange> mTooltipAttachStatusListeners = new ArrayList<OnTooltipAttachedStateChange>();
+    private final List<OnTooltipAttachedStateChange> mTooltipAttachStatusListeners = new CopyOnWriteArrayList<OnTooltipAttachedStateChange>();
 
     final HashMap<Integer, TooltipView> mTooltips = new HashMap<Integer, TooltipView>();
     final Object lock = new Object();
@@ -79,7 +79,9 @@ public class TooltipManager {
     private void fireOnTooltipDetached(int id) {
         if (mTooltipAttachStatusListeners.size() > 0) {
             for (OnTooltipAttachedStateChange listener : mTooltipAttachStatusListeners) {
-                listener.onTooltipDetached(id);
+                if (listener != null) {
+                    listener.onTooltipDetached(id);
+                }
             }
         }
     }
@@ -87,7 +89,9 @@ public class TooltipManager {
     private void fireOnTooltipAttached(int id) {
         if (mTooltipAttachStatusListeners.size() > 0) {
             for (OnTooltipAttachedStateChange listener : mTooltipAttachStatusListeners) {
-                listener.onTooltipAttached(id);
+                if (listener != null) {
+                    listener.onTooltipAttached(id);
+                }
             }
         }
     }
