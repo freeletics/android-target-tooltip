@@ -243,6 +243,7 @@ public class TooltipManager {
         onTooltipClosingCallback closeCallback;
         int inAnimation = android.R.animator.fade_in;
         int outAnimation = android.R.animator.fade_out;
+        View brightView;
 
         Builder(final TooltipManager manager, int id) {
             this.manager = new WeakReference<TooltipManager>(manager);
@@ -369,6 +370,18 @@ public class TooltipManager {
 
         public Builder background(int colorResId) {
             this.backgroundColorResId = colorResId;
+            return this;
+        }
+
+        /**
+         * Exclude a view when drawing the background color. Use it create a highlighted view on colored (e.g. dimmed)
+         * background.
+         *
+         * @param brightView
+         * @return
+         */
+        public Builder brightView(View brightView) {
+            this.brightView = brightView;
             return this;
         }
 

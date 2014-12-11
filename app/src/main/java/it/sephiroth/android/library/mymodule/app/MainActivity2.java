@@ -90,12 +90,13 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 			       .anchor(mButton2, TooltipManager.Gravity.LEFT)
 			       .actionBarSize(Utils.getActionBarSize(getBaseContext()))
 			       .closePolicy(TooltipManager.ClosePolicy.TouchOutside, 0)
-			       .text(R.string.hello_world)
+			       .text("Touch outside with background")
 			       .toggleArrow(true)
                    .animationDuration(250)
                    .withCustomAnimations(R.animator.pop_in, R.animator.pop_out)
 			       .maxWidth(400)
 			       .withCallback(this)
+                    .background(R.color.black_dark_transparent)
 			       .show();
 		}
 		else if (id == mButton3.getId()) {
@@ -103,13 +104,14 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 			       .anchor(mButton3, TooltipManager.Gravity.TOP)
 			       .actionBarSize(Utils.getActionBarSize(getBaseContext()))
 			       .closePolicy(TooltipManager.ClosePolicy.TouchOutsideExclusive, 0)
-			       .text("Touch outside exclusive")
+			       .text("Touch outside exclusive with background and bright view")
 			       .toggleArrow(true)
 			       .maxWidth(400)
 			       .withCallback(this)
                    .animationDuration(200)
                    .withCustomAnimations(R.animator.pop_in, R.animator.pop_out)
 			       .background(R.color.black_dark_transparent)
+                   .brightView(mButton3)
 			       .show();
 		} else if (id == mButton4.getId()) {
             manager.create(2)
