@@ -427,9 +427,11 @@ class TooltipView extends ViewGroup implements Tooltip {
         }
 
         mTextView = (TextView) mView.findViewById(android.R.id.text1);
-        mTextView.setText(Html.fromHtml((String) this.text));
-        if (maxWidth > -1) {
-            mTextView.setMaxWidth(maxWidth);
+        if (mTextView != null) {
+            mTextView.setText(Html.fromHtml((String) this.text));
+            if (maxWidth > -1) {
+                mTextView.setMaxWidth(maxWidth);
+            }
         }
 
         this.addView(mView, params);
