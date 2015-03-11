@@ -51,6 +51,7 @@ class TooltipView extends ViewGroup implements Tooltip {
     private final int inAnimation;
     private final int outAnimation;
     private final int backgroundColorResId;
+    private final boolean centerHorizontally;
 
     private CharSequence text;
     TooltipManager.Gravity gravity;
@@ -85,6 +86,7 @@ class TooltipView extends ViewGroup implements Tooltip {
         this.inAnimation = builder.inAnimation;
         this.outAnimation = builder.outAnimation;
         this.backgroundColorResId = builder.backgroundColorResId;
+        this.centerHorizontally = builder.centerHorizontally;
 
         if (builder.backgroundColorResId > 0) {
             mBackgroundTransitionDrawable =
@@ -599,6 +601,10 @@ class TooltipView extends ViewGroup implements Tooltip {
             }
         }
         //@formatter:on
+
+        if (centerHorizontally) {
+            drawRect.offset((screenRect.right - drawRect.right - drawRect.left) / 2, 0);
+        }
 
         // translate the textview
         mView.setTranslationX(drawRect.left);

@@ -1,14 +1,15 @@
 package it.sephiroth.android.library.mymodule.app;
 
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+
 import it.sephiroth.android.library.tooltip.TooltipManager;
 
 
@@ -21,6 +22,7 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 	Button mButton3;
 	Button mButton4;
 	Button mButton5;
+	Button mButton6;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +34,13 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 		mButton3 = (Button) findViewById(R.id.button3);
 		mButton4 = (Button) findViewById(R.id.button4);
 		mButton5 = (Button) findViewById(R.id.button5);
+		mButton6 = (Button) findViewById(R.id.button6);
 		mButton1.setOnClickListener(this);
 		mButton2.setOnClickListener(this);
 		mButton3.setOnClickListener(this);
 		mButton4.setOnClickListener(this);
 		mButton5.setOnClickListener(this);
+		mButton6.setOnClickListener(this);
 	}
 
 
@@ -69,9 +73,6 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 
 		Log.i(TAG, "onClick: " + id);
 
-		DisplayMetrics metrics = getResources().getDisplayMetrics();
-		TooltipManager.Gravity gravity = TooltipManager.Gravity.values()[((int) (Math.random() * TooltipManager.Gravity.values().length))];
-
 		TooltipManager manager = TooltipManager.getInstance(this);
 
 		if (id == mButton1.getId()) {
@@ -96,7 +97,7 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
                    .withCustomAnimations(R.animator.pop_in, R.animator.pop_out)
 			       .maxWidth(400)
 			       .withCallback(this)
-                    .background(R.color.black_dark_transparent)
+                   .background(R.color.black_dark_transparent)
 			       .show();
 		}
 		else if (id == mButton3.getId()) {
@@ -114,7 +115,7 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
                    .brightView(mButton3)
 			       .show();
 		} else if (id == mButton4.getId()) {
-            manager.create(2)
+            manager.create(3)
                 .anchor(mButton4, TooltipManager.Gravity.BOTTOM)
                 .actionBarSize(Utils.getActionBarSize(getBaseContext()))
                 .closePolicy(TooltipManager.ClosePolicy.TouchInsideExclusive, 0)
@@ -125,8 +126,8 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
                 .withCallback(this)
                 .show();
         } else if (id == mButton5.getId()) {
-            manager.create(2)
-                .anchor(mButton4, TooltipManager.Gravity.TOP)
+            manager.create(4)
+                .anchor(mButton5, TooltipManager.Gravity.TOP)
                 .actionBarSize(Utils.getActionBarSize(getBaseContext()))
                 .closePolicy(TooltipManager.ClosePolicy.TouchOutsideExclusive, 0)
                 .withCustomView(R.layout.custom_textview, true)
@@ -137,6 +138,16 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
                 .activateDelay(2000)
                 .withCallback(this)
                 .show();
+        } else if (id == mButton6.getId()) {
+            manager.create(5)
+                    .anchor(new Point(mButton6.getLeft(), mButton6.getTop()), TooltipManager.Gravity.TOP)
+                    .actionBarSize(Utils.getActionBarSize(getBaseContext()))
+                    .closePolicy(TooltipManager.ClosePolicy.TouchOutsideExclusive, 0)
+                    .withCustomView(R.layout.custom_layout, false)
+                    .centerHorizontally(true)
+                    .toggleArrow(true)
+                    .withCallback(this)
+                    .show();
         }
 	}
 

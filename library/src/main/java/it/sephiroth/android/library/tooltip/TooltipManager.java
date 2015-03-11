@@ -244,6 +244,7 @@ public class TooltipManager {
         int inAnimation = android.R.animator.fade_in;
         int outAnimation = android.R.animator.fade_out;
         View brightView;
+        boolean centerHorizontally = false;
 
         Builder(final TooltipManager manager, int id) {
             this.manager = new WeakReference<TooltipManager>(manager);
@@ -251,9 +252,9 @@ public class TooltipManager {
         }
 
         /**
-         * Use a custom View for the tooltip. Note that the custom view
-         * must include a TextView which id is `@android:id/text1`.<br />
-         * Moreover, when using a custom view, the anchor arrow will not be shown
+         * Use a custom View for the tooltip. Note: If you want to show the tooltip text,
+         * the custom view must include a TextView which id is `@android:id/text1`. Otherwise
+         * the text will be ignored. <br />
          *
          * @param resId              the custom layout view.
          * @param replace_background if true the custom view's background won't be replaced
@@ -382,6 +383,17 @@ public class TooltipManager {
          */
         public Builder brightView(View brightView) {
             this.brightView = brightView;
+            return this;
+        }
+
+        /**
+         * Whether to show the tooltip horizontally centered in the screen.
+         *
+         * @param center
+         * @return
+         */
+        public Builder centerHorizontally(boolean center) {
+            this.centerHorizontally = center;
             return this;
         }
 
