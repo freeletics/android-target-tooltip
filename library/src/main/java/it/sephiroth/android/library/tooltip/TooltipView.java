@@ -8,6 +8,8 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.text.Html;
 import android.util.Log;
@@ -88,12 +90,10 @@ class TooltipView extends ViewGroup implements Tooltip {
         this.backgroundColorResId = builder.backgroundColorResId;
         this.centerHorizontally = builder.centerHorizontally;
 
-        if (builder.backgroundColorResId > 0) {
-            mBackgroundTransitionDrawable =
-                    new TooltipBackgroundDrawable(getContext().getResources().getColor(backgroundColorResId),
-                                                  builder.brightView);
-            setBackgroundDrawable(mBackgroundTransitionDrawable);
-        }
+        mBackgroundTransitionDrawable = new TransitionDrawable(new Drawable[] {
+                new ColorDrawable(Color.TRANSPARENT),
+                new TooltipBackgroundDrawable(context, builder)});
+        setBackgroundDrawable(mBackgroundTransitionDrawable);
 
         if (null != builder.point) {
             this.point = new Point(builder.point);

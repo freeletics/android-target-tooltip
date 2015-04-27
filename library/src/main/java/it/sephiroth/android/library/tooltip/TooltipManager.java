@@ -225,7 +225,7 @@ public class TooltipManager {
         View view;
         Gravity gravity;
         int actionbarSize = 0;
-        int backgroundColorResId = 0;
+        int backgroundColorResId = android.R.color.transparent;
         int textResId = R.layout.tooltip_textview;
         ClosePolicy closePolicy;
         long showDuration;
@@ -243,8 +243,9 @@ public class TooltipManager {
         onTooltipClosingCallback closeCallback;
         int inAnimation = android.R.animator.fade_in;
         int outAnimation = android.R.animator.fade_out;
-        View brightView;
+        View highlightView;
         boolean centerHorizontally = false;
+        int highlightDrawableResId = 0;
 
         Builder(final TooltipManager manager, int id) {
             this.manager = new WeakReference<TooltipManager>(manager);
@@ -375,15 +376,28 @@ public class TooltipManager {
         }
 
         /**
-         * Exclude a view when drawing the background color. Use it create a highlighted view on colored (e.g. dimmed)
-         * background.
+         * Highlight a specific view.
+         * The highlighted view will be excluded when drawing the background, instead a custom
+         * drawable can be drawn on top of it to further highlight it.
          *
-         * @param brightView
+         * @param highlightView
+         * @param highlightDrawableResId
          * @return
          */
-        public Builder brightView(View brightView) {
-            this.brightView = brightView;
+        public Builder highlightView(View highlightView, int highlightDrawableResId) {
+            this.highlightView = highlightView;
+            this.highlightDrawableResId = highlightDrawableResId;
             return this;
+        }
+
+        /**
+         * Like {@link #highlightView(android.view.View, int)}, but no highlighting drawable set.
+         *
+         * @param highlightView
+         * @return
+         */
+        public Builder highlightView(View highlightView) {
+            return highlightView(highlightView, 0);
         }
 
         /**
