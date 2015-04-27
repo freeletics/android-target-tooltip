@@ -3,6 +3,13 @@ package it.sephiroth.android.library.tooltip;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.Point;
+import android.support.annotation.AnimatorRes;
+import android.support.annotation.ColorRes;
+import android.support.annotation.DimenRes;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.StringRes;
+import android.support.annotation.StyleRes;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -261,23 +268,23 @@ public class TooltipManager {
          * @param replace_background if true the custom view's background won't be replaced
          * @return
          */
-        public Builder withCustomView(int resId, boolean replace_background) {
+        public Builder withCustomView(@LayoutRes int resId, boolean replace_background) {
             this.textResId = resId;
             this.isCustomView = replace_background;
             return this;
         }
 
-        public Builder withCustomView(int resId) {
+        public Builder withCustomView(@LayoutRes int resId) {
             return withCustomView(resId, true);
         }
 
-        public Builder withCustomAnimations(int in, int out) {
+        public Builder withCustomAnimations(@AnimatorRes int in, @AnimatorRes int out) {
             this.inAnimation = in;
             this.outAnimation = out;
             return this;
         }
 
-        public Builder withStyleId(int styleId) {
+        public Builder withStyleId(@StyleRes int styleId) {
             this.defStyleAttr = 0;
             this.defStyleRes = styleId;
             return this;
@@ -298,11 +305,11 @@ public class TooltipManager {
             return this;
         }
 
-        public Builder text(Resources res, int resid) {
+        public Builder text(Resources res, @StringRes int resid) {
             return text(res.getString(resid));
         }
 
-        public Builder text(int resid) {
+        public Builder text(@StringRes int resid) {
             TooltipManager tipManager = manager.get();
             if (null != tipManager) {
                 if (null != tipManager.mActivity) {
@@ -350,7 +357,7 @@ public class TooltipManager {
             return this;
         }
 
-        public Builder actionBarSize(Resources resources, int resId) {
+        public Builder actionBarSize(Resources resources, @DimenRes int resId) {
             return actionBarSize(resources.getDimensionPixelSize(resId));
         }
 
@@ -370,7 +377,7 @@ public class TooltipManager {
             return this;
         }
 
-        public Builder background(int colorResId) {
+        public Builder background(@ColorRes int colorResId) {
             this.backgroundColorResId = colorResId;
             return this;
         }
@@ -384,7 +391,7 @@ public class TooltipManager {
          * @param highlightDrawableResId
          * @return
          */
-        public Builder highlightView(View highlightView, int highlightDrawableResId) {
+        public Builder highlightView(View highlightView, @DrawableRes int highlightDrawableResId) {
             this.highlightView = highlightView;
             this.highlightDrawableResId = highlightDrawableResId;
             return this;
