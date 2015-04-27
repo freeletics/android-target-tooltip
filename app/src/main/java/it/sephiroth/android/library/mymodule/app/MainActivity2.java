@@ -79,7 +79,7 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 			manager.create(0)
 			       .anchor(mButton1, TooltipManager.Gravity.RIGHT)
 			       .actionBarSize(Utils.getActionBarSize(getBaseContext()))
-			       .closePolicy(TooltipManager.ClosePolicy.TouchInside, 3000)
+			       .closePolicy(TooltipManager.ClosePolicy.TouchOutside, 3000)
 			       .text(R.string.hello_world)
 			       .toggleArrow(true)
 			       .maxWidth(400)
@@ -90,14 +90,15 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 			manager.create(1)
 			       .anchor(mButton2, TooltipManager.Gravity.LEFT)
 			       .actionBarSize(Utils.getActionBarSize(getBaseContext()))
-			       .closePolicy(TooltipManager.ClosePolicy.TouchOutside, 0)
-			       .text("Touch outside with background")
+			       .closePolicy(TooltipManager.ClosePolicy.TouchInside, 0)
+			       .text("Touch inside with background and highlighted view")
 			       .toggleArrow(true)
                    .animationDuration(250)
                    .withCustomAnimations(R.animator.pop_in, R.animator.pop_out)
 			       .maxWidth(400)
 			       .withCallback(this)
                    .background(R.color.black_dark_transparent)
+                   .highlightView(mButton2)
 			       .show();
 		}
 		else if (id == mButton3.getId()) {
@@ -105,14 +106,14 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 			       .anchor(mButton3, TooltipManager.Gravity.TOP)
 			       .actionBarSize(Utils.getActionBarSize(getBaseContext()))
 			       .closePolicy(TooltipManager.ClosePolicy.TouchOutsideExclusive, 0)
-			       .text("Touch outside exclusive with background and bright view")
+			       .text("Touch outside exclusive with background and highlighted view")
 			       .toggleArrow(true)
 			       .maxWidth(400)
 			       .withCallback(this)
                    .animationDuration(200)
                    .withCustomAnimations(R.animator.pop_in, R.animator.pop_out)
 			       .background(R.color.black_dark_transparent)
-                   .brightView(mButton3)
+                   .highlightView(mButton3, R.drawable.highlight)
 			       .show();
 		} else if (id == mButton4.getId()) {
             manager.create(3)
@@ -120,10 +121,11 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
                 .actionBarSize(Utils.getActionBarSize(getBaseContext()))
                 .closePolicy(TooltipManager.ClosePolicy.TouchInsideExclusive, 0)
                 .withCustomView(R.layout.custom_textview, false)
-                .text("Custom view with touch inside exclusive")
+                .text("Custom view with touch inside exclusive and background")
                 .toggleArrow(false)
                 .maxWidth(300)
                 .withCallback(this)
+                .background(R.color.black_dark_transparent)
                 .show();
         } else if (id == mButton5.getId()) {
             manager.create(4)
