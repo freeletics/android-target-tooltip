@@ -30,9 +30,8 @@ public class TooltipBackgroundDrawable extends Drawable {
     public void draw(Canvas canvas) {
         if (mHighlightViews != null) {
             Rect highlightRect = new Rect();
-
+            Rect vRect = new Rect();
             for(View v: mHighlightViews) {
-                Rect vRect = new Rect();
                 v.getGlobalVisibleRect(vRect);
                 highlightRect.union(vRect);
             }
