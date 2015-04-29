@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -243,7 +244,7 @@ public class TooltipManager {
         onTooltipClosingCallback closeCallback;
         int inAnimation = android.R.animator.fade_in;
         int outAnimation = android.R.animator.fade_out;
-        View highlightView;
+        List<View> highlightViews;
         boolean centerHorizontally = false;
         int highlightDrawableResId = 0;
 
@@ -376,28 +377,28 @@ public class TooltipManager {
         }
 
         /**
-         * Highlight a specific view.
-         * The highlighted view will be excluded when drawing the background, instead a custom
-         * drawable can be drawn on top of it to further highlight it.
+         * Highlight specific views.
+         * The highlighted views will be excluded when drawing the background, instead a custom
+         * drawable can be drawn on top of it to further highlight it. The highlighted area is a union of all visible portions of the given views.
          *
-         * @param highlightView
+         * @param highlightViews
          * @param highlightDrawableResId
          * @return
          */
-        public Builder highlightView(View highlightView, int highlightDrawableResId) {
-            this.highlightView = highlightView;
+        public Builder highlightViews(int highlightDrawableResId, View... highlightViews) {
+            this.highlightViews = Arrays.asList(highlightViews);
             this.highlightDrawableResId = highlightDrawableResId;
             return this;
         }
 
         /**
-         * Like {@link #highlightView(android.view.View, int)}, but no highlighting drawable set.
+         * Like {@link #highlightViews(int, View...)}, but no highlighting drawable set.
          *
-         * @param highlightView
+         * @param highlightViews
          * @return
          */
-        public Builder highlightView(View highlightView) {
-            return highlightView(highlightView, 0);
+        public Builder highlightViews(View... highlightViews) {
+            return highlightViews(0, highlightViews);
         }
 
         /**

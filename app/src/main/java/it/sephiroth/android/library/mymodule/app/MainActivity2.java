@@ -23,6 +23,9 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 	Button mButton4;
 	Button mButton5;
 	Button mButton6;
+    Button mButton7;
+    View mView1;
+    View mView2;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +38,16 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 		mButton4 = (Button) findViewById(R.id.button4);
 		mButton5 = (Button) findViewById(R.id.button5);
 		mButton6 = (Button) findViewById(R.id.button6);
+        mButton7 = (Button) findViewById(R.id.button7);
+        mView1 = findViewById(R.id.view1);
+        mView2 = findViewById(R.id.view2);
 		mButton1.setOnClickListener(this);
 		mButton2.setOnClickListener(this);
 		mButton3.setOnClickListener(this);
 		mButton4.setOnClickListener(this);
 		mButton5.setOnClickListener(this);
 		mButton6.setOnClickListener(this);
+        mButton7.setOnClickListener(this);
 	}
 
 
@@ -98,7 +105,7 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
 			       .maxWidth(400)
 			       .withCallback(this)
                    .background(R.color.black_dark_transparent)
-                   .highlightView(mButton2)
+                   .highlightViews(mButton2)
 			       .show();
 		}
 		else if (id == mButton3.getId()) {
@@ -113,7 +120,7 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
                    .animationDuration(200)
                    .withCustomAnimations(R.animator.pop_in, R.animator.pop_out)
 			       .background(R.color.black_dark_transparent)
-                   .highlightView(mButton3, R.drawable.highlight)
+                   .highlightViews(R.drawable.highlight, mButton3)
 			       .show();
 		} else if (id == mButton4.getId()) {
             manager.create(3)
@@ -149,6 +156,18 @@ public class MainActivity2 extends ActionBarActivity implements View.OnClickList
                     .centerHorizontally(true)
                     .toggleArrow(true)
                     .withCallback(this)
+                    .show();
+        } else if(id== mButton7.getId()) {
+            manager.create(5)
+                    .anchor(new Point(mButton7.getLeft(), mButton7.getTop()), TooltipManager.Gravity.TOP)
+                    .actionBarSize(Utils.getActionBarSize(getBaseContext()))
+                    .closePolicy(TooltipManager.ClosePolicy.TouchOutsideExclusive, 0)
+                    .withCustomView(R.layout.custom_layout, false)
+                    .centerHorizontally(true)
+                    .toggleArrow(true)
+                    .withCallback(this)
+                    .background(R.color.black_dark_transparent)
+                    .highlightViews(mButton7, mView1, mView2)
                     .show();
         }
 	}

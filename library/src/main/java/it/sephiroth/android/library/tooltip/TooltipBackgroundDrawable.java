@@ -8,17 +8,19 @@ import android.graphics.Region;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
+import java.util.List;
+
 public class TooltipBackgroundDrawable extends Drawable {
 
     private int mBackgroundColor;
 
-    private View mHighlightedView;
+    private List<View> mHighlightViews;
 
     private Drawable mHighlightDrawable;
 
     public TooltipBackgroundDrawable(Context context, TooltipManager.Builder builder) {
         mBackgroundColor = context.getResources().getColor(builder.backgroundColorResId);
-        mHighlightedView = builder.highlightView;
+        mHighlightViews = builder.highlightViews;
         if (builder.highlightDrawableResId > 0) {
             mHighlightDrawable = context.getResources().getDrawable(builder.highlightDrawableResId);
         }
@@ -26,9 +28,14 @@ public class TooltipBackgroundDrawable extends Drawable {
 
     @Override
     public void draw(Canvas canvas) {
-        if (mHighlightedView != null) {
+        if (mHighlightViews != null) {
             Rect highlightRect = new Rect();
-            mHighlightedView.getGlobalVisibleRect(highlightRect);
+
+            for(View v: mHighlightViews) {
+                Rect vRect = new Rect();
+                v.getGlobalVisibleRect(vRect);
+                highlightRect.union(vRect);
+            }
 
             if (mHighlightDrawable != null) {
                 mHighlightDrawable.setBounds(highlightRect);
