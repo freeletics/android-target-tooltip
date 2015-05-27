@@ -28,6 +28,7 @@ public class TooltipBackgroundDrawable extends Drawable {
 
     @Override
     public void draw(Canvas canvas) {
+        canvas.save();
         if (mHighlightViews != null) {
             Rect highlightRect = new Rect();
             Rect vRect = new Rect();
@@ -45,6 +46,7 @@ public class TooltipBackgroundDrawable extends Drawable {
         }
 
         canvas.drawColor(mBackgroundColor);
+        canvas.restore();
     }
 
     @Override
