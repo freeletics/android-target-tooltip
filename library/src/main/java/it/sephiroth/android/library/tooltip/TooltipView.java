@@ -11,6 +11,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
+import android.os.Build;
 import android.text.Html;
 import android.util.Log;
 import android.view.*;
@@ -93,7 +94,13 @@ class TooltipView extends ViewGroup implements Tooltip {
         mBackgroundTransitionDrawable = new TransitionDrawable(new Drawable[] {
                 new ColorDrawable(Color.TRANSPARENT),
                 new TooltipBackgroundDrawable(context, builder)});
-        setBackgroundDrawable(mBackgroundTransitionDrawable);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            //noinspection deprecation
+            setBackgroundDrawable(mBackgroundTransitionDrawable);
+        } else {
+            setBackground(mBackgroundTransitionDrawable);
+        }
 
         if (null != builder.point) {
             this.point = new Point(builder.point);
@@ -420,7 +427,14 @@ class TooltipView extends ViewGroup implements Tooltip {
         mView = LayoutInflater.from(getContext()).inflate(textResId, this, false);
 
         if (null != mDrawable) {
-            mView.setBackgroundDrawable(mDrawable);
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                //noinspection deprecation
+                mView.setBackgroundDrawable(mDrawable);
+            } else {
+                mView.setBackground(mDrawable);
+            }
+
             if (hideArrow) {
                 mView.setPadding(padding / 2, padding / 2, padding / 2, padding / 2);
             } else {
