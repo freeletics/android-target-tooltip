@@ -3,6 +3,8 @@
 	<!-- default style for theme -->
 	<attr name="ttlm_defaultStyle" format="reference" />
 
+	<attr name="ttlm_textSize" format="dimension" />
+
 	<!-- default style -->
 	<declare-styleable name="TooltipLayout">
 		<attr name="ttlm_padding" format="dimension" />

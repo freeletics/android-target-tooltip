@@ -6,7 +6,7 @@
 		<!--
 		<item name="ttlm_defaultStyle">@style/ToolTipLayoutCustomStyle</item>
 		-->
-
+        <item name="ttlm_textSize">18dip</item>
 	</style>
 
 	<style name="ToolTipLayoutCustomStyle">

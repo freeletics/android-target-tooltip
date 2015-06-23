@@ -9,4 +9,8 @@
 		<item name="ttlm_cornerRadius">@dimen/ttlm_default_corner_radius</item>
 		<item name="ttlm_arrowRatio">1.4</item>
 	</style>
+
+    <style name="ToolTipLayoutTextStyle" parent="android:TextAppearance.Small.Inverse">
+        <item name="android:textSize">?attr/ttlm_textSize</item>
+    </style>
 </resources>
