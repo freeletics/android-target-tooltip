@@ -10,7 +10,7 @@
 		<item name="ttlm_arrowRatio">1.4</item>
 	</style>
 
-    <style name="ToolTipLayoutTextStyle" parent="android:TextAppearance.Small.Inverse">
-        <item name="android:textSize">?attr/ttlm_textSize</item>
-    </style>
+    <style name="ToolTipTextDefaultStyle" parent="android:TextAppearance.Small.Inverse"/>
+
+
 </resources>

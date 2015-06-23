@@ -3,10 +3,8 @@
 	<style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
 
 		<!-- set the default style to be used with all the tooltips -->
-		<!--
-		<item name="ttlm_defaultStyle">@style/ToolTipLayoutCustomStyle</item>
-		-->
-        <item name="ttlm_textSize">18dip</item>
+        <item name="ttlm_defaultStyle">@style/ToolTipLayoutCustomStyle</item>
+        <item name="ttlm_defaultTextStyle">@style/ToolTipCustomTextStyle</item>
 	</style>
 
 	<style name="ToolTipLayoutCustomStyle">
@@ -16,5 +14,10 @@
 		<item name="ttlm_strokeWeight">0dip</item>
 		<item name="ttlm_cornerRadius">8dip</item>
 	</style>
+
+    <style name="ToolTipCustomTextStyle" parent="android:TextAppearance.Small.Inverse">
+        <item name="android:textSize">40sp</item>
+        <item name="android:textColor">#ff1111ff</item>
+    </style>
 
 </resources>

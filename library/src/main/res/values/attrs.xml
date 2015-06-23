@@ -2,8 +2,7 @@
 <resources>
 	<!-- default style for theme -->
 	<attr name="ttlm_defaultStyle" format="reference" />
-
-	<attr name="ttlm_textSize" format="dimension" />
+	<attr name="ttlm_defaultTextStyle" format="reference" />
 
 	<!-- default style -->
 	<declare-styleable name="TooltipLayout">

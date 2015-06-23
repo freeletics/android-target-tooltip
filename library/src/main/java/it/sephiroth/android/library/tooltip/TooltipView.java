@@ -14,6 +14,7 @@ import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
 import android.text.Html;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.*;
 import android.widget.TextView;
 
@@ -43,6 +44,7 @@ class TooltipView extends ViewGroup implements Tooltip {
     private final View targetView;
     private final Point point;
     private final int textResId;
+    private final int textStyleResId;
     private final int topRule;
     private final int maxWidth;
     private final boolean hideArrow;
@@ -70,6 +72,14 @@ class TooltipView extends ViewGroup implements Tooltip {
         TypedArray theme = context.getTheme().obtainStyledAttributes(null, R.styleable.TooltipLayout, builder.defStyleAttr, builder.defStyleRes);
         this.padding = theme.getDimensionPixelSize(R.styleable.TooltipLayout_ttlm_padding, 30);
         theme.recycle();
+
+        TypedValue value = new TypedValue();
+        boolean found = context.getTheme().resolveAttribute(R.attr.ttlm_defaultTextStyle, value, true);
+        if (found) {
+            textStyleResId = value.resourceId;
+        } else {
+            textStyleResId = R.style.ToolTipTextDefaultStyle;
+        }
 
         this.toolTipId = builder.id;
         this.text = builder.text;
@@ -444,6 +454,7 @@ class TooltipView extends ViewGroup implements Tooltip {
 
         mTextView = (TextView) mView.findViewById(android.R.id.text1);
         if (mTextView != null) {
+            mTextView.setTextAppearance(getContext(), textStyleResId);
             mTextView.setText(Html.fromHtml((String) this.text));
             if (maxWidth > -1) {
                 mTextView.setMaxWidth(maxWidth);
